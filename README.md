@@ -1,4 +1,4 @@
-Docker image for the [mdbtools](https://github.com/brianb/mdbtools) utility, an open source library (and related command-line tools) that supports extraction of data from Microsoft Access databases.
+Docker assets for creating an image ([Docker Hub](https://hub.docker.com/r/rillke/mdbtools/)) containing the [**mdbtools**](https://github.com/brianb/mdbtools) utility, an open source library (and related command-line tools) that supports extraction of data from Microsoft Access databases.
 
 ## Interactive Usage
 
@@ -49,9 +49,9 @@ man mdb-tables
 man [mdb-array|mdb-export|mdb-header|mdb-hexdump|mdb-import|mdb-parsecsv|mdb-prop|mdb-schema|mdb-sql|mdb-tables|mdb-ver]
 ```
 
-## Convert MS Access Database to MySQL/MariaDB dump file
+## MS Access to MySQL/MariaDB dump
 
-This image comes with a script `to_mysql.sh`, reading MS Access Database files and outputting as MySQL dump.
+This image comes with a script `to_mysql.sh`, reading MS Access Database files and outputting as MySQL SQL.
 
 ```
 docker run -it --rm -v /path/to/host/db.mdb:/opt/mdbdata/db.mdb:ro rillke/mdbtools-docker bash -c "to_mysql.sh /opt/mdbdata/db.mdb" > db.sql
