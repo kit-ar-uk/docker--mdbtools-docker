@@ -8,6 +8,8 @@ Mount a volume that points to the host directory containing your Access database
 docker run -it --rm -v /path/to/host/directory:/opt/mdbdata rillke/mdbtools-docker bash
 ```
 
+Now you have an interactive shell, e.g.:
+
 ```
 bash-4.3# cd /opt/mdbdata
 bash-4.3# pwd
@@ -31,15 +33,19 @@ The toy Access database `mdbtools-demo.accdb` is available from the image github
 
 ### Installing a text editor
 
+Inside the container, type
+
 ```bash
 apk --no-cache add vim nano
 ```
 
 ### Getting help
 
+Inside the container, type
+
 ```bash
 man mdb-tables
-...
+ ...
 man [mdb-array|mdb-export|mdb-header|mdb-hexdump|mdb-import|mdb-parsecsv|mdb-prop|mdb-schema|mdb-sql|mdb-tables|mdb-ver]
 ```
 
