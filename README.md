@@ -4,7 +4,9 @@ Docker image for the [mdbtools](https://github.com/brianb/mdbtools) utility, an 
 
 Mount a volume that points to the host directory containing your Access database(s), then run the container interactively and execute `bash`:
 
-  docker run -it --rm -v /path/to/host/directory:/opt/mdbdata rillke/mdbtools-docker bash
+```bash
+docker run -it --rm -v /path/to/host/directory:/opt/mdbdata rillke/mdbtools-docker bash
+```
 
 ```
 bash-4.3# cd /opt/mdbdata
@@ -25,12 +27,28 @@ RecordID,RecordValue
 bash-4.3#
 ```
 
+The toy Access database `mdbtools-demo.accdb` is available from the image github repo at https://github.com/scottcame/docker/tree/master/mdbtools
+
+### Installing a text editor
+
+```bash
+apk --no-cache add vim nano
+```
+
+### Getting help
+
+```bash
+man mdb-tables
+...
+man [mdb-array|mdb-export|mdb-header|mdb-hexdump|mdb-import|mdb-parsecsv|mdb-prop|mdb-schema|mdb-sql|mdb-tables|mdb-ver]
+```
+
 ## Convert MS Access Database to MySQL/MariaDB dump file
 
-This image comes with a file `to_mysql.sh`, reading MS Access Database files and outputting as MySQL dump.
+This image comes with a script `to_mysql.sh`, reading MS Access Database files and outputting as MySQL dump.
 
 ```
-docker run -it --rm -v /path/to/host/db.mdb:/opt/mdbdata/db.mdb rillke/mdbtools-docker bash -c "to_mysql.sh /opt/mdbdata/db.mdb" > db.sql
+docker run -it --rm -v /path/to/host/db.mdb:/opt/mdbdata/db.mdb:ro rillke/mdbtools-docker bash -c "to_mysql.sh /opt/mdbdata/db.mdb" > db.sql
 ```
 
 ## Notes
@@ -38,6 +56,4 @@ docker run -it --rm -v /path/to/host/db.mdb:/opt/mdbdata/db.mdb rillke/mdbtools-
 This image is [alpine](https://alpinelinux.org/) based. It includes `7z` and `unrar` (as well as `gunzip` and `unzip`), as sometimes providers of Access databases use these compression tools when delivering their databases.
 
 The `mdbtools` included in the image is compiled with the limited sql support as well as ODBC support, and man pages.
-
-The toy Access database referenced above (`mdbtools-demo.accdb`) is available from the image github repo at https://github.com/scottcame/docker/tree/master/mdbtools
 
