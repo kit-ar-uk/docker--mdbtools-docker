@@ -5,7 +5,7 @@ Docker assets for creating an image ([Docker Hub](https://hub.docker.com/r/rillk
 Mount a volume that points to the host directory containing your Access database(s), then run the container interactively and execute `bash`:
 
 ```bash
-docker run -it --rm -v /path/to/host/directory:/opt/mdbdata rillke/mdbtools-docker bash
+docker run -it --rm -v /path/to/host/directory:/opt/mdbdata rillke/mdbtools bash
 ```
 
 Now you have an interactive shell, e.g.:
@@ -54,7 +54,7 @@ man [mdb-array|mdb-export|mdb-header|mdb-hexdump|mdb-import|mdb-parsecsv|mdb-pro
 This image comes with a script `to_mysql.sh`, reading MS Access Database files and outputting as MySQL SQL.
 
 ```
-docker run -it --rm -v /path/to/host/db.mdb:/opt/mdbdata/db.mdb:ro rillke/mdbtools-docker bash -c "to_mysql.sh /opt/mdbdata/db.mdb" > db.sql
+docker run -it --rm -v /path/to/host/db.mdb:/opt/mdbdata/db.mdb:ro rillke/mdbtools bash -c "to_mysql.sh /opt/mdbdata/db.mdb" > db.sql
 ```
 
 ## Notes
