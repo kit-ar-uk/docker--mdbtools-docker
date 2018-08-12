@@ -16,6 +16,8 @@ RUN apk --no-cache add ca-certificates \
         cd /tmp && \
         git clone https://github.com/brianb/mdbtools.git && \
     cd mdbtools && \
+    git fetch origin pull/137/head:fix-16k-memo-limit && \
+    git checkout fix-16k-memo-limit && \
     autoreconf -i -f && \
     ./configure --with-unixodbc=/usr/local --mandir=/usr/share/man && make && make install && \
     cp README "/opt/mdbdata/" && \
