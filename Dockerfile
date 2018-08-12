@@ -16,6 +16,7 @@ RUN apk --no-cache add ca-certificates \
         cd /tmp && \
         git clone https://github.com/brianb/mdbtools.git && \
     cd mdbtools && \
+    git checkout d6f5745d949f37db969d5f424e69b54f0da60b9b && \
     autoreconf -i -f && \
     ./configure --with-unixodbc=/usr/local --mandir=/usr/share/man && make && make install && \
     cp README "/opt/mdbdata/" && \
