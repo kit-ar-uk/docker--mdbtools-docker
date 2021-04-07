@@ -17,49 +17,74 @@ T_STAMP=$(date -u +"%Y%m%d_%H%M%SZ")
 MDB_FILE="$1"
 [ -e "${MDB_FILE}" ] || exit -2
 
-TMP_DIR="${PWD}/_out/${MDB_FILE}.${T_STAMP}.sqlite3"
-[ -d "${TMP_DIR}" ] && exit -5
+if [ "$2" != "" ]; then
+    OUT_DIR="$2"
+else
+    OUT_DIR="${PWD}/_out/${MDB_FILE}.${T_STAMP}.sqlite3"
+fi
+[ -d "${OUT_DIR}" ] && exit -5
+mkdir -p "${OUT_DIR}"
 
-mkdir -p "${TMP_DIR}"
+OUT_FILE_DB=${OUT_DIR}/${MDB_FILE}.sqlite3
+[ -f "${OUT_FILE_DB}" ] && exit -7
 
-OUT_FILE_SQL_PRFX="${TMP_DIR}/sqlite3"
+echo "Converting MSAccess to SQLite..."
+echo ""
+echo "   from: [${MDB_FILE}]"
+echo "     to: [${OUT_FILE_DB}]"
+echo "     on: [${OUT_DIR}]"
+echo ""
+echo "SQLite version:"
+sqlite3 -version
+echo "mdb-tools version"
+apt list mdbtools
+echo ""
+
+OUT_FILE_SQL_PRFX="${OUT_DIR}/sqlite3"
 touch "${OUT_FILE_SQL_PRFX}.1.schema.sql"
 touch "${OUT_FILE_SQL_PRFX}.2.data.sql"
 
-mdb-schema \
-    --default-values \
-    --not-empty \
-    "${MDB_FILE}" \
-    sqlite >> "${OUT_FILE_SQL_PRFX}.1.schema.sql"
+dump_sql__schema() {
+    mdb-schema \
+        --default-values \
+        --not-empty \
+        "${MDB_FILE}" \
+        sqlite 
+}
 
-MDB_TABLES=$(mdb-tables -1 -t table "${MDB_FILE}" |grep -v "Paste Error" |grep -v "~TMP")
+dump_sql__data() {
+    local MDB_TABLES=$(mdb-tables -1 -t table "${MDB_FILE}" |grep -v "Paste Error" |grep -v "~TMP")
 
-echo "BEGIN;" >> "${OUT_FILE_SQL_PRFX}.2.data.sql"
-echo "" >> "${OUT_FILE_SQL_PRFX}.2.data.sql"
-for t in ${MDB_TABLES}; do 
-    mdb-export \
-        "${MDB_FILE}" "$t" \
-        --date-format='%Y-%m-%d' \
-        --datetime-format='%Y-%m-%d %H:%M:%S' \
-        -I sqlite >> "${OUT_FILE_SQL_PRFX}.2.data.sql"
+    echo "BEGIN;"
+    echo ""
+    for t in ${MDB_TABLES}; do 
+        mdb-export \
+            "${MDB_FILE}" "$t" \
+            --date-format='%Y-%m-%d' \
+            --datetime-format='%Y-%m-%d %H:%M:%S' \
+            -I sqlite
 
-        # --boolean-words 
-        # -0
-        # --namespace
-    echo "" >> "${OUT_FILE_SQL_PRFX}.2.data.sql"
-done
-echo "COMMIT;" >> "${OUT_FILE_SQL_PRFX}.2.data.sql"
-echo "" >> "${OUT_FILE_SQL_PRFX}.2.data.sql"
+            # --boolean-words 
+            # -0
+            # --namespace
+        echo ""
+    done
+    echo "COMMIT;"
+    echo ""
+}
 
+dump_sql__schema >> "${OUT_FILE_SQL_PRFX}.1.schema.sql"
+dump_sql__data   >> "${OUT_FILE_SQL_PRFX}.2.data.sql"
+
+mdb-ver "${MDB_FILE}"
 time \
     cat \
-        "${OUT_FILE_SQL_PRFX}.1.schema.sql" 
+        "${OUT_FILE_SQL_PRFX}.1.schema.sql" \
         "${OUT_FILE_SQL_PRFX}.2.data.sql" \
     | \
     sqlite3 \
         -bail \
         -batch \
-        "${TMP_DIR}/${MDB_FILE}.sqlite3"
+        "${OUT_FILE_DB}"
 
-sqlite3 -version
-
+ls -la "${OUT_FILE_DB}"
