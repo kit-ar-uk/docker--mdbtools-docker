@@ -28,26 +28,16 @@ default:
 
 .PHONY: buildx-deb
 buildx-deb: r--buildx-deb
+
 r--buildx-%:
 	@echo "####################################################"
 	# if needed, run this before
 	#     docker buildx create --use
-	docker $(BUILD_CMD) $(BUILD_CACHE) -f Dockerfile \
+	docker $(BUILD_CMD) $(BUILD_CACHE) -f Dockerfile.$*-src \
 			-t $(DH_ID_base):$* \
 			-t $(DH_ID_base):$*-${TAG_VERSION} \
 			. \
 		| tee /tmp/docker--mdbtools-docker-$*.log \
-		;\
-
-buildx-ubuntu:
-	@echo "####################################################"
-	# if needed, run this before
-	#     docker buildx create --use
-	docker $(BUILD_CMD) $(BUILD_CACHE) -f Dockerfile.ubuntu \
-			-t $(DH_ID_base):$* \
-			-t $(DH_ID_base):$*-${TAG_VERSION} \
-			. \
-		| tee /tmp/docker--mdbtools-docker-ubuntu2004.log \
 		;\
 
 # docker build --rm -f "Dockerfile" -t kitaruk/mdbtools-docker:ubuntu2004 "."  
