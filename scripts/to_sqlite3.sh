@@ -21,9 +21,10 @@ if [ "$2" != "" ]; then
     OUT_DIR="$2"
 else
     OUT_DIR="${PWD}/_out/${MDB_FILE}.${T_STAMP}.sqlite3"
+    [ -d "${OUT_DIR}" ] && exit -5
 fi
-[ -d "${OUT_DIR}" ] && exit -5
 mkdir -p "${OUT_DIR}"
+[ -d "${OUT_DIR}" ] || exit -6
 
 OUT_FILE_DB=${OUT_DIR}/${MDB_FILE}.sqlite3
 [ -f "${OUT_FILE_DB}" ] && exit -7
