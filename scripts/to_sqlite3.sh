@@ -77,6 +77,24 @@ dump_sql__data() {
 dump_sql__schema >> "${OUT_FILE_SQL_PRFX}.1.schema.sql"
 dump_sql__data   >> "${OUT_FILE_SQL_PRFX}.2.data.sql"
 
+# https://unixsheikh.com/articles/sqlite-the-only-database-you-will-ever-need-in-most-cases.html
+# https://sqlite.org/pragma.html
+# need to add:
+#   PRAGMA auto_vacuum = INCREMENTAL;
+#   PRAGMA busy_timeout = 30000;
+#   PRAGMA encoding = 'UTF-8';
+#   PRAGMA foreign_keys = true;
+#   PRAGMA journal_mode = WAL;
+#   PRAGMA locking_mode = EXCLUSIVE;
+#   PRAGMA read_uncommitted = FALSE;
+#   PRAGMA recursive_triggers = TRUE;
+#   # PRAGMA schema.synchronous = NORMAL;
+#   # PRAGMA schema.synchronous = FULL;
+#   PRAGMA schema.synchronous = EXTRA;
+#   PRAGMA schema.user_version = 0;
+#
+#   PRAGMA writable_schema = ??;
+
 mdb-ver "${MDB_FILE}"
 time \
     cat \
