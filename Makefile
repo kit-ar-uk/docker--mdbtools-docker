@@ -1,7 +1,7 @@
 # .ONESHELL:
 .SHELLFLAGS = -e
 
-TAG_VERSION=221213a
+TAG_VERSION=221213d
 
 DH_ID_base=kitaruk/mdbtools-docker
 
