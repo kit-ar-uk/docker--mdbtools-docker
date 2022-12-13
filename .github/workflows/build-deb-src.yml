@@ -4,8 +4,8 @@ on:
     branches:
       - master
 env:
-  TAG_VERSION: ${{format('YYMMDD-HHmmss', steps.time.outputs.start)}}
-  DH_ID_base: kitaruk/mdbtools-docker
+  TAG_VERSION: 221212a
+  DH_ID_base:  kitaruk/mdbtools-docker
 
 jobs:
   build-deb:
