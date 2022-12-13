@@ -1,53 +1,42 @@
-name: buildx-deb
+name: build-deb
 on:
   push:
     branches:
       - master
+env:
+  TAG_VERSION: ${{formatDate("YYMMDD-HHmmss", new Date())}}
+  DH_ID_base: kitaruk/mdbtools-docker
+
 jobs:
-  buildx-deb:
+  build-deb:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Check out the repo
+        uses: actions/checkout@v3
 
-      # - name: Build and push Docker image
-      #   run: |
-      #     TAG_VERSION=221213a
-      #     DH_ID_base=kitaruk/mdbtools-docker
-      #     docker build \
-      #             --pull \
-      #             --platform linux/amd64 \
-      #             -f Dockerfile.buildx-deb-src \
-      #             -t $(DH_ID_base):buildx-deb \
-      #             -t $(DH_ID_base):buildx-deb-${TAG_VERSION} \
-      #             .
-      # - name: Push Docker Image to Docker Hub
-      #   run: |
-      #     docker push kitaruk/mdbtools-docker:buildx-deb
-      #     docker push kitaruk/mdbtools-docker:buildx-deb-${TAG_VERSION}
+      - name: Set Image Tag
+        run: |
+          if [ -n "$(git tag)" ]; then
+            export IMAGE_TAG="$(git tag)"
+          else
+            export IMAGE_TAG="${{env.TAG_VERSION}}"
+          fi
 
-      - name: Build Docker Image
-        uses: docker/build-push-action@v1
-        with:
-          context: .
-          dockerfile: Dockerfile.buildx-deb-src
-          tags: kitaruk/mdbtools-docker:buildx-deb,kitaruk/mdbtools-docker:buildx-deb-${TAG_VERSION}
+      - name: Build and push Docker image
+        run: |
 
-      - name: Push Docker Image to GitHub Registry
-        uses: docker/push-action@v1
-        with:
-          registry: ghcr.io
-          repository: kitaruk/mdbtools-docker
-          tags: buildx-deb,buildx-deb-${TAG_VERSION}
-
-      # - name: Push Docker Image to Docker Hub
-      #   uses: docker/push-action@v1
-      #   with:
-      #     registry: docker.io
-      #     repository: kitaruk/mdbtools-docker
-      #     tags: buildx-deb,buildx-deb-${TAG_VERSION}
+          docker build \
+                  --pull \
+                  --platform linux/amd64 \
+                  -f Dockerfile.build-deb-src \
+                  -t "${{env.DH_ID_base}}:build-deb" \
+                  -t "${{env.DH_ID_base}}:build-deb-${{env.TAG_VERSION}}" \
+                  .
+      - name: Login to GitHub Container Registry
+        run: docker login docker.pkg.github.com -u ${{secrets.GITHUB_USERNAME}} -p ${{secrets.GITHUB_TOKEN}}
 
 
-
-
-
+      - name: Push Docker Image
+        run: |
+          docker push \
+            docker.pkg.github.com/${{secrets.GITHUB_USERNAME}}/${{env.DH_ID_base}}:${{env.TAG_VERSION}}
