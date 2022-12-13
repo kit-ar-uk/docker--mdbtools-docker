@@ -1,0 +1,53 @@
+name: buildx-deb
+on:
+  push:
+    branches:
+      - master
+jobs:
+  buildx-deb:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # - name: Build and push Docker image
+      #   run: |
+      #     TAG_VERSION=221213a
+      #     DH_ID_base=kitaruk/mdbtools-docker
+      #     docker build \
+      #             --pull \
+      #             --platform linux/amd64 \
+      #             -f Dockerfile.buildx-deb-src \
+      #             -t $(DH_ID_base):buildx-deb \
+      #             -t $(DH_ID_base):buildx-deb-${TAG_VERSION} \
+      #             .
+      # - name: Push Docker Image to Docker Hub
+      #   run: |
+      #     docker push kitaruk/mdbtools-docker:buildx-deb
+      #     docker push kitaruk/mdbtools-docker:buildx-deb-${TAG_VERSION}
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v1
+        with:
+          context: .
+          dockerfile: Dockerfile.buildx-deb-src
+          tags: kitaruk/mdbtools-docker:buildx-deb,kitaruk/mdbtools-docker:buildx-deb-${TAG_VERSION}
+
+      - name: Push Docker Image to GitHub Registry
+        uses: docker/push-action@v1
+        with:
+          registry: ghcr.io
+          repository: kitaruk/mdbtools-docker
+          tags: buildx-deb,buildx-deb-${TAG_VERSION}
+
+      # - name: Push Docker Image to Docker Hub
+      #   uses: docker/push-action@v1
+      #   with:
+      #     registry: docker.io
+      #     repository: kitaruk/mdbtools-docker
+      #     tags: buildx-deb,buildx-deb-${TAG_VERSION}
+
+
+
+
+

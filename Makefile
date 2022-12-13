@@ -1,7 +1,7 @@
 # .ONESHELL:
 .SHELLFLAGS = -e
 
-TAG_VERSION=210409a
+TAG_VERSION=221213a
 
 DH_ID_base=kitaruk/mdbtools-docker
 
@@ -11,6 +11,9 @@ DH_ID_base=kitaruk/mdbtools-docker
 
 THIS_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 TIMESTAMP=$(shell date -u +"%Y%m%d_%H%M%S%Z")
+
+DOCKER_BIN=docker
+#DOCKER_BIN=podman
 
 BUILD_CACHE=
 # # BUILD_CACHE=--pull
@@ -33,12 +36,12 @@ r--buildx-%:
 	@echo "####################################################"
 	# if needed, run this before
 	#     docker buildx create --use
-	docker $(BUILD_CMD) $(BUILD_CACHE) -f Dockerfile.$*-src \
+	$(DOCKER_BIN) $(BUILD_CMD) $(BUILD_CACHE) -f Dockerfile.$*-src \
 			-t $(DH_ID_base):$* \
 			-t $(DH_ID_base):$*-${TAG_VERSION} \
 			. \
 		| tee /tmp/docker--mdbtools-docker-$*.log \
 		;\
 
-# docker build --rm -f "Dockerfile" -t kitaruk/mdbtools-docker:ubuntu2004 "."  
-# docker buildx build --pull --push --rm -f "Dockerfile" -t kitaruk/mdbtools-docker:ubuntu2004 "."  
+# docker build --rm -f "Dockerfile" -t kitaruk/mdbtools-docker:ubuntu2004 "."
+# docker buildx build --pull --push --rm -f "Dockerfile" -t kitaruk/mdbtools-docker:ubuntu2004 "."
