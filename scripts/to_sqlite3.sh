@@ -2,7 +2,7 @@
 #
 # v1.0.1    2021-04-06a     webdev+jc@kit-ar.com
 #
-# inspired in 
+# inspired in
 #   https://gist.github.com/peteWT/f229d27875572b577cf301b05b08eb2d
 #   https://gist.github.com/kazlauskis/1d0bdb9efb3b1bb1e76d48aa368f3a64
 #
@@ -50,7 +50,7 @@ dump_sql__schema() {
         --default-values \
         --not-empty \
         "${MDB_FILE}" \
-        sqlite 
+        sqlite | sed 's/=Now()/CURRENT_DATE/g'
 }
 
 dump_sql__data() {
@@ -58,14 +58,14 @@ dump_sql__data() {
 
     echo "BEGIN;"
     echo ""
-    for t in ${MDB_TABLES}; do 
+    for t in ${MDB_TABLES}; do
         mdb-export \
             "${MDB_FILE}" "$t" \
             --date-format='%Y-%m-%d' \
             --datetime-format='%Y-%m-%d %H:%M:%S' \
             -I sqlite
 
-            # --boolean-words 
+            # --boolean-words
             # -0
             # --namespace
         echo ""
